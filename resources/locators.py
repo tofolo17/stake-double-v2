@@ -30,5 +30,8 @@ class GamePageLocators:
     COLUMN_2ND = (By.CSS_SELECTOR, '[data-bet-spot-id="2nd12"]')
     COLUMN_3RD = (By.CSS_SELECTOR, '[data-bet-spot-id="3rd12"]')
 
+    REPEAT_BUTTON = (By.CSS_SELECTOR, '[data-role="repeat-button"]')
+    DOUBLE_BUTTON = (By.CSS_SELECTOR, '[data-role="double-button"]')
+
     # CLASS_NAME
     CHIPS = (By.CLASS_NAME, 'chipItem--07039')

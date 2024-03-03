@@ -62,6 +62,37 @@ class GamePage(BasePage):
         while True:
             # Check for changes in the total bet label
             total_bet = self.get_total_bet_change(initial_total_bet)
+            print('Total bet anterior: R$', initial_total_bet)
+            print('Total bet atual: R$', total_bet)
+
+            # Wait for the board elements to be clickable
+            # --- Testing ---
+            self.find(self.locator.REPEAT_BUTTON)
+
+            # If the total bet is equals to zero, the bet was lost
+            if total_bet == 0:
+                # If we lost, we double the bet and update the balance
+                balance -= initial_total_bet
+                initial_total_bet *= 2
+                print('Derrota!')
+                print(f'Novo saldo: R${balance}')
+                print(f'Nova aposta: R${initial_total_bet}\n')
+
+                # Check if the balance is enough
+                if balance < initial_total_bet:
+                    print('Saldo insuficiente!')
+                    return
+
+                # Perform the bet
+                self.click(self.locator.REPEAT_BUTTON)
+                self.click(self.locator.DOUBLE_BUTTON)
+
+                # TESTING
+                # TESTING
+                # TESTING
+
+            else:
+                pass
 
     def get_money(self, locator):
         balance = self.text(locator)
