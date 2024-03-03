@@ -34,6 +34,9 @@ def main():
     game_page = GP.GamePage(driver)
     game_page.load()
 
+    # Enter game
+    game_page.enter_game()
+
     # Sleeps for 5 seconds
     time.sleep(30)
 

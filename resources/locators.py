@@ -16,5 +16,11 @@ class AffiliatePageLocators:
         '#root > div.modal.modal-ssm > div.modal-wrapper > div > div.modal-body > form > button.button.text.color-primary.medium'
     )
 
+
 class GamePageLocators:
-    pass
+    # NAME
+    EXTERNAL_IFRAME = (By.NAME, 'external-game')
+
+    # CSS
+    INTERNAL_IFRAME = (By.CSS_SELECTOR, 'div.games-container > iframe')
+    BALANCE_VALUE = (By.CSS_SELECTOR, '[data-role="balance-label-value"]')
