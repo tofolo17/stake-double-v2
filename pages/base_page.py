@@ -8,7 +8,7 @@ class BasePage:
 
     def __init__(self, browser):
         self.browser = browser
-        self.wait = WebDriverWait(browser, 180)
+        self.wait = WebDriverWait(browser, 360)
 
     def find(self, locator):
         return self.wait.until(EC.element_to_be_clickable(locator))
@@ -41,7 +41,7 @@ class BasePage:
             try:
                 element = driver.find_element(*locator)
                 text = element.text.strip()
-                return text != ''
+                return ((text != '') and ('-' not in text))
             except Exception:
                 return False
 

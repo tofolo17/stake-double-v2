@@ -1,3 +1,5 @@
+import time
+
 from resources.utils import *
 from pages.base_page import BasePage
 from resources.locators import GamePageLocators
@@ -12,96 +14,137 @@ class GamePage(BasePage):
         self.locator = GamePageLocators
 
     def enter_game(self):
-        f1 = self.find(self.locator.EXTERNAL_IFRAME)
+        # Entering the game by switching frames
+        external_iframe = self.find(self.locator.EXTERNAL_IFRAME)
         self.frame(self.locator.EXTERNAL_IFRAME)
 
-        f2 = self.find(self.locator.INTERNAL_IFRAME)
+        internal_iframe = self.find(self.locator.INTERNAL_IFRAME)
         self.frame(self.locator.INTERNAL_IFRAME)
 
-        print(f'Iframe carregado:\n{f1}\n{f2}')
+        print(f'Frames loaded:\n{external_iframe}\n{internal_iframe}')
 
+        # Checking if balance is displayed
         self.find(self.locator.BALANCE_VALUE)
 
-        print('Elemento carregado. Estamos dentro do jogo!')
+        print('Element loaded. Inside the game!')
 
     def bet_strategy(self):
-        initial_bet = 1
+        # Initial bet amount
+        first_bet = 2
 
         # Get the balance
         balance = self.get_money(self.locator.BALANCE_VALUE)
 
         # Check if the balance is enough
-        if balance < initial_bet * 2:
-            print('Saldo insuficiente!')
-            self.browser.quit()
-        print(f'Saldo: R${balance}')
+        self.check_balance(balance, first_bet)
+        print(f'Initial balance: R${balance}\n')
 
-        # Get the chip_bet
-        bets = [1, 2.5, 5, 10, 25, 125]
-        self.find(self.locator.CHIPS)  # Guarantees that the chips are loaded
-        chips = self.finds(self.locator.CHIPS)
-        chip_bet = chips[bets.index(initial_bet)]
+        # Get the chip_bet, column_2nd and column_3rd
+        chip_bet, column_2nd, column_3rd = self.find_structural_elements(
+            first_bet)
 
-        # Find the 2nd and 3rd columns
-        column_2nd = self.find(self.locator.COLUMN_2ND)
-        column_3rd = self.find(self.locator.COLUMN_3RD)
+        # Perform the first bet
+        self.perform_bet(chip_bet, column_2nd, column_3rd)
 
-        # Bet on the 2nd and 3rd columns
-        self.click(chip_bet)
-        self.click(column_2nd)
-        self.click(column_3rd)
-
-        # Get the total bet
-        initial_total_bet = self.get_money(self.locator.TOTAL_BET_VALUE)
-        if initial_total_bet != initial_bet * 2:
-            print('Algo deu errado!')
-            return
-        print(f'Aposta inicial: R${initial_total_bet}. Vamos jogar!')
+        # Get the initial total bet
+        last_bet = self.get_money(self.locator.TOTAL_BET_VALUE)
+        print(f'Initial bet amount: R${last_bet}\n')
 
         # Play loop
         while True:
             # Check for changes in the total bet label
-            total_bet = self.get_total_bet_change(initial_total_bet)
-            print('Total bet anterior: R$', initial_total_bet)
-            print('Total bet atual: R$', total_bet)
+            result = self.get_last_bet_change(last_bet)
 
             # Wait for the board elements to be clickable
-            # --- Testing ---
             self.find(self.locator.REPEAT_BUTTON)
 
-            # If the total bet is equals to zero, the bet was lost
-            if total_bet == 0:
-                # If we lost, we double the bet and update the balance
-                balance -= initial_total_bet
-                initial_total_bet *= 2
-                print('Derrota!')
-                print(f'Novo saldo: R${balance}')
-                print(f'Nova aposta: R${initial_total_bet}\n')
-
-                # Check if the balance is enough
-                if balance < initial_total_bet:
-                    print('Saldo insuficiente!')
-                    return
-
-                # Perform the bet
-                self.click(self.locator.REPEAT_BUTTON)
-                self.click(self.locator.DOUBLE_BUTTON)
-
-                # TESTING
-                # TESTING
-                # TESTING
-
+            # If the total bet is equal to zero, the bet was lost
+            if result == 0:
+                balance, current_bet = self.handle_loss(balance, last_bet)
             else:
-                pass
+                balance, current_bet = self.handle_win(
+                    balance, last_bet, first_bet, chip_bet, column_2nd, column_3rd
+                )
+
+            # Update the last_bet
+            last_bet = current_bet
+
+            # Refresh the structural elements <AVOID ERRORS>
+            chip_bet, column_2nd, column_3rd = self.find_structural_elements()
 
     def get_money(self, locator):
+        # Get the balance amount and convert it to float
         balance = self.text(locator)
         cleaned_balance = remove_non_utf8_chars(balance)
         money_balance = convert_to_float(cleaned_balance)
         return money_balance
 
-    def get_total_bet_change(self, total_bet):
+    def find_structural_elements(self, first_bet):
+        # Get the chip_bet
+        bets = [2, 5, 10, 20, 50, 250]
+        self.find(self.locator.CHIPS)
+        chips = self.finds(self.locator.CHIPS)
+        chip_bet = chips[bets.index(first_bet)]
+
+        # Find the 2nd and 3rd columns
+        column_2nd = self.find(self.locator.COLUMN_2ND)
+        column_3rd = self.find(self.locator.COLUMN_3RD)
+
+        return chip_bet, column_2nd, column_3rd
+
+    def check_balance(self, balance, amount):
+        # Check if the balance is sufficient for the bet
+        if balance < amount:
+            print('Insufficient balance!')
+            self.browser.quit()
+
+    def perform_bet(self, chip_bet, column_2nd, column_3rd):
+        # Perform the bet by clicking on the chip and columns
+
+        # Counter
+        counter = 0
+
+        # Try to click the chip 5 times due to elements in it's way
+        while counter < 5:
+            try:
+                self.click(chip_bet)
+                break
+            except Exception:
+                counter += 1
+                time.sleep(1)
+                print('Chip not found. Retrying...')
+
+        self.click(column_2nd)
+        self.click(column_3rd)
+
+    def get_last_bet_change(self, last_bet):
+        # Check for changes in the total bet label
         while True:
-            new_total_bet = self.get_money(self.locator.TOTAL_BET_VALUE)
-            if new_total_bet != total_bet:
-                return new_total_bet
+            result = self.get_money(self.locator.TOTAL_BET_VALUE)
+            if result != last_bet:
+                return result
+
+    def handle_loss(self, balance, last_bet):
+        # Handle the loss scenario
+        balance -= last_bet
+        current_bet = last_bet * 2
+        print('Loss!')
+        print(f'New balance: R${balance}')
+        print(f'New bet amount: R${current_bet}\n')
+        self.check_balance(balance, current_bet)
+        self.click(self.locator.REPEAT_BUTTON)
+        self.click(self.locator.DOUBLE_BUTTON)
+
+        return balance, current_bet
+
+    def handle_win(self, balance, last_bet, first_bet, chip_bet, column_2nd, column_3rd):
+        # Handle the win scenario
+        balance += last_bet / 2
+        current_bet = first_bet
+        print('Win!')
+        print(f'New balance: R${balance}')
+        print(f'New bet amount: R${current_bet}\n')
+        self.check_balance(balance, current_bet)
+        self.perform_bet(chip_bet, column_2nd, column_3rd)
+
+        return balance, current_bet

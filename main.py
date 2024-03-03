@@ -14,37 +14,41 @@ load_dotenv(env_settings("DESENVOLVIMENTO"))
 
 # Main function
 def main():
-    # Create a new instance of the Chrome driver
-    driver = webdriver.Chrome(
-        service=ChromeService(ChromeDriverManager().install())
-    )
-    driver.maximize_window()
+    try:
+        # Create a new instance of the Chrome driver
+        driver = webdriver.Chrome(
+            service=ChromeService(ChromeDriverManager().install())
+        )
+        driver.maximize_window()
 
-    # Load the affiliate page
-    affiliate_page = AP.AffiliatePage(driver)
-    affiliate_page.load()
+        # Load the affiliate page
+        affiliate_page = AP.AffiliatePage(driver)
+        affiliate_page.load()
 
-    # Open the login form
-    affiliate_page.open_login_form()
+        # Open the login form
+        affiliate_page.open_login_form()
 
-    # Login to the main page
-    affiliate_page.login()
+        # Login to the main page
+        affiliate_page.login()
 
-    # Load the game page
-    game_page = GP.GamePage(driver)
-    game_page.load()
+        # Load the game page
+        game_page = GP.GamePage(driver)
+        game_page.load()
 
-    # Enter game
-    game_page.enter_game()
+        # Enter game
+        game_page.enter_game()
 
-    # Bet strategy
-    game_page.bet_strategy()
+        # Bet strategy
+        game_page.bet_strategy()
 
-    # Sleeps for 5 seconds
-    time.sleep(30)
+        # Sleeps for 5 seconds
+        time.sleep(30)
 
-    # Close the browser
-    driver.quit()
+        # Close the browser
+        driver.quit()
+    except Exception as e:
+        print('Unexpected error. Please be aware that web automation is a complex task with and erros might happen. Do not give up and run the code again.')
+        print(f'Erorr: {e}')
 
 
 if __name__ == '__main__':
