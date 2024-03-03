@@ -1,5 +1,3 @@
-import time
-
 from resources.utils import *
 from pages.base_page import BasePage
 from resources.locators import GamePageLocators
@@ -30,18 +28,24 @@ class GamePage(BasePage):
 
     def bet_strategy(self):
         # Initial bet amount
-        first_bet = 2
+        first_bet = 5
 
         # Get the balance
         balance = self.get_money(self.locator.BALANCE_VALUE)
 
+        # Check if there's a bet in progress
+        if self.get_money(self.locator.TOTAL_BET_VALUE) != 0:
+            print('There is a bet in progress. Please wait for it to finish.')
+            self.browser.quit()
+
         # Check if the balance is enough
         self.check_balance(balance, first_bet)
-        print(f'Initial balance: R${balance}\n')
+        print(f'Initial balance: R${balance}')
 
         # Get the chip_bet, column_2nd and column_3rd
         chip_bet, column_2nd, column_3rd = self.find_structural_elements(
-            first_bet)
+            first_bet
+        )
 
         # Perform the first bet
         self.perform_bet(chip_bet, column_2nd, column_3rd)
@@ -58,26 +62,39 @@ class GamePage(BasePage):
             # Wait for the board elements to be clickable
             self.find(self.locator.REPEAT_BUTTON)
 
+            # Update the balance after the result
+            balance = self.get_money(self.locator.BALANCE_VALUE)
+
+            # Print the result
+            print(f'Due to last round, our balance was: R${balance}')
+
             # If the total bet is equal to zero, the bet was lost
             if result == 0:
-                balance, current_bet = self.handle_loss(balance, last_bet)
+                current_bet = self.handle_loss(balance, last_bet)
             else:
-                balance, current_bet = self.handle_win(
-                    balance, last_bet, first_bet, chip_bet, column_2nd, column_3rd
+                current_bet = self.handle_win(
+                    balance, first_bet, chip_bet, column_2nd, column_3rd
                 )
+
+            # Print our new trial
+            print(
+                f"To the next round, we'll bet R${current_bet}. That leaves us with R${balance - current_bet} in our balance. Good luck!\n"
+            )
 
             # Update the last_bet
             last_bet = current_bet
 
-            # Refresh the structural elements <AVOID ERRORS>
-            chip_bet, column_2nd, column_3rd = self.find_structural_elements()
+            # Refresh the structural elements - <AVOID ERRORS>
+            chip_bet, column_2nd, column_3rd = self.find_structural_elements(
+                first_bet
+            )
 
     def get_money(self, locator):
         # Get the balance amount and convert it to float
-        balance = self.text(locator)
-        cleaned_balance = remove_non_utf8_chars(balance)
-        money_balance = convert_to_float(cleaned_balance)
-        return money_balance
+        money = self.text(locator)
+        cleaned_money = remove_non_utf8_chars(money)
+        float_money = convert_to_float(cleaned_money)
+        return float_money
 
     def find_structural_elements(self, first_bet):
         # Get the chip_bet
@@ -100,22 +117,9 @@ class GamePage(BasePage):
 
     def perform_bet(self, chip_bet, column_2nd, column_3rd):
         # Perform the bet by clicking on the chip and columns
-
-        # Counter
-        counter = 0
-
-        # Try to click the chip 5 times due to elements in it's way
-        while counter < 5:
-            try:
-                self.click(chip_bet)
-                break
-            except Exception:
-                counter += 1
-                time.sleep(1)
-                print('Chip not found. Retrying...')
-
-        self.click(column_2nd)
-        self.click(column_3rd)
+        self.force_click(chip_bet, 10)
+        self.force_click(column_2nd, 10)
+        self.force_click(column_3rd, 10)
 
     def get_last_bet_change(self, last_bet):
         # Check for changes in the total bet label
@@ -126,25 +130,29 @@ class GamePage(BasePage):
 
     def handle_loss(self, balance, last_bet):
         # Handle the loss scenario
-        balance -= last_bet
         current_bet = last_bet * 2
         print('Loss!')
-        print(f'New balance: R${balance}')
-        print(f'New bet amount: R${current_bet}\n')
+
+        # Check if the balance is enough
         self.check_balance(balance, current_bet)
-        self.click(self.locator.REPEAT_BUTTON)
-        self.click(self.locator.DOUBLE_BUTTON)
+        print("Balance OK. We're good to go!")
 
-        return balance, current_bet
+        # Repeat and double the bet
+        self.force_click(self.locator.REPEAT_BUTTON, 10)
+        self.force_click(self.locator.DOUBLE_BUTTON, 10)
 
-    def handle_win(self, balance, last_bet, first_bet, chip_bet, column_2nd, column_3rd):
+        return current_bet
+
+    def handle_win(self, balance, first_bet, chip_bet, column_2nd, column_3rd):
         # Handle the win scenario
-        balance += last_bet / 2
         current_bet = first_bet
         print('Win!')
-        print(f'New balance: R${balance}')
-        print(f'New bet amount: R${current_bet}\n')
+
+        # Check if the balance is enough
         self.check_balance(balance, current_bet)
+        print("Balance OK. We're good to go!")
+
+        # Perform the bet
         self.perform_bet(chip_bet, column_2nd, column_3rd)
 
-        return balance, current_bet
+        return current_bet

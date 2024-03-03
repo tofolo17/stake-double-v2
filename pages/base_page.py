@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -18,6 +20,17 @@ class BasePage:
 
     def click(self, locator):
         self.wait.until(EC.element_to_be_clickable(locator)).click()
+
+    def force_click(self, locator, force):
+        counter = 0
+
+        while counter < force:
+            try:
+                self.click(locator)
+                break
+            except Exception:
+                counter += 1
+                time.sleep(1)
 
     def text(self, locator):
         self.wait.until(self.non_null_value(locator))

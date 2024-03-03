@@ -1,6 +1,6 @@
 # Stake Double
 
-## Instalação de Requisitos
+## Instalação de Dependências
 
 Os passos a seguir foram executados numa máquina virtual zerada. Repetindo-os num sistema operacional como o Windows 10 ou Windows 11 garantem a funcionalidade da aplicação final. Acompanhe:
 
@@ -21,4 +21,36 @@ Para testar a instalação:
 
 Você deve obter algo como:
 
-![alt text](image.png)
+![alt text](images\image.png)
+
+### Git
+
+O Git será necessário para levar o conteúdo da nuvem até a sua máquina. Também, será utilizado para manter o programa atualizado.
+
+Instale o Git por este [link](https://git-scm.com/download/win) (versão mais recente).
+
+Realize a instalação padrão, clicando em "Next"/"Próximo" a cada nova etapa.
+
+Para testar a instalação:
+* Aperte `Windows` + `r`;
+* Digite `cmd`;
+* Execute `git --version`.
+
+Você deve obter algo como:
+
+![alt text](images\image2.png)
+
+## Instalação do Robô
+
+### Clonagem
+
+Com os requisitos instalados, devemos clonar os arquivos que estão na nuvem no nosso computador. Para tal:
+* Aperte `Windows` + `r`;
+* Digite `cmd`;
+* Vá até a pasta que armazenará o programa através do comando `cd`:
+    * Exemplo: `cd Documents`. Para saber mais, clique [aqui](https://www.freecodecamp.org/news/command-line-commands-cli-tutorial/).
+* Execute `git clone ___________________`.
+
+### Ambiente
+
+_CONTINUAR_

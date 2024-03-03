@@ -1,4 +1,4 @@
-import argparse
+import os
 
 
 def env_settings(STAGE):
@@ -10,41 +10,37 @@ def env_settings(STAGE):
     return env_file
 
 
-def main(args):
+def main():
+    # Check if there's a folder called "money" in this directory
+    if not os.path.exists('money'):
+        # If not, create an virtualenv called "money" the current directory
+        os.system('virtualenv money')
+    print('Virtualenv created.')
+
+    # Activate the virtualenv
+    os.system('money/Scripts/activate')
+    print('Virtualenv activated.')
+
+    # Install the required packages
+    os.system('pip install -r requirements.txt')
+    print('Packages installed.')
+
+    # Requests username and password from the user
+    username = input('Enter your username: ')
+    password = input('Enter your password: ')
+
+    # Requests how much money the user wants to bet (minimum R$10 / R$5 each column)
+    money = input('Enter the amount of money you want to bet: ')
+
     # Get settings
-    env_file = env_settings(args.stage)
+    env_file = env_settings("DESENVOLVIMENTO")
 
     # Save the username and password in a config environment file
     with open(env_file, 'w') as file:
-        file.write(f'USER={args.username}\n')
-        file.write(f'PASSWORD={args.password}\n')
+        file.write(f'USER={username}\n')
+        file.write(f'PASSWORD={password}\n')
+        file.write(f'MONEY={money}\n')
 
 
 if __name__ == '__main__':
-    # Create a new ArgumentParser instance
-    parser = argparse.ArgumentParser()
-
-    # Login arguments
-    parser.add_argument(
-        '--username',
-        help='The username to use for authentication'
-    )
-
-    # Password arguments
-    parser.add_argument(
-        '--password',
-        help='The password to use for authentication'
-    )
-
-    # Stage arguments
-    parser.add_argument(
-        '--stage',
-        help='The stage to use for the environment',
-        default='PRODUCAO'
-    )
-
-    # Parse the arguments
-    args = parser.parse_args()
-
-    # Call the main function
-    main(args)
+    main()
