@@ -37,6 +37,9 @@ def main():
     # Enter game
     game_page.enter_game()
 
+    # Bet strategy
+    game_page.bet_strategy()
+
     # Sleeps for 5 seconds
     time.sleep(30)
 
