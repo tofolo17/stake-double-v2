@@ -8,7 +8,7 @@ class BasePage:
 
     def __init__(self, browser):
         self.browser = browser
-        self.wait = WebDriverWait(browser, 60)
+        self.wait = WebDriverWait(browser, 180)
 
     def find(self, locator):
         return self.wait.until(EC.element_to_be_clickable(locator))

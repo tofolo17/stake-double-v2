@@ -25,34 +25,52 @@ class GamePage(BasePage):
         print('Elemento carregado. Estamos dentro do jogo!')
 
     def bet_strategy(self):
-        # initial_bet = 1
+        initial_bet = 1
 
         # Get the balance
-        balance = self.text(self.locator.BALANCE_VALUE)
+        balance = self.get_money(self.locator.BALANCE_VALUE)
+
+        # Check if the balance is enough
+        if balance < initial_bet * 2:
+            print('Saldo insuficiente!')
+            self.browser.quit()
+        print(f'Saldo: R${balance}')
+
+        # Get the chip_bet
+        bets = [1, 2.5, 5, 10, 25, 125]
+        self.find(self.locator.CHIPS)  # Guarantees that the chips are loaded
+        chips = self.finds(self.locator.CHIPS)
+        chip_bet = chips[bets.index(initial_bet)]
+
+        # Find the 2nd and 3rd columns
+        column_2nd = self.find(self.locator.COLUMN_2ND)
+        column_3rd = self.find(self.locator.COLUMN_3RD)
+
+        # Bet on the 2nd and 3rd columns
+        self.click(chip_bet)
+        self.click(column_2nd)
+        self.click(column_3rd)
+
+        # Get the total bet
+        initial_total_bet = self.get_money(self.locator.TOTAL_BET_VALUE)
+        if initial_total_bet != initial_bet * 2:
+            print('Algo deu errado!')
+            return
+        print(f'Aposta inicial: R${initial_total_bet}. Vamos jogar!')
+
+        # Play loop
+        while True:
+            # Check for changes in the total bet label
+            total_bet = self.get_total_bet_change(initial_total_bet)
+
+    def get_money(self, locator):
+        balance = self.text(locator)
         cleaned_balance = remove_non_utf8_chars(balance)
-        print(f'Saldo: {cleaned_balance}')
+        money_balance = convert_to_float(cleaned_balance)
+        return money_balance
 
-        # Save balance value in a txt file
-        with open('balance.txt', 'w', encoding='utf-8') as file:
-            file.write(cleaned_balance)
-
-        # # Check if the balance is enough
-        # if balance < initial_bet:
-        #     print('Saldo insuficiente!')
-        #     self.browser.quit()
-        # print(f'Saldo: R${balance}')
-
-        # # Get the chip_bet
-        # bets = [1, 2.5, 5, 10, 25, 125]
-        # self.find(self.locator.CHIPS)  # Guarantees that the chips are loaded
-        # chips = self.finds(self.locator.CHIPS)
-        # chip_bet = chips[bets.index(initial_bet)]
-
-        # # Find the 2nd and 3rd columns
-        # column_2nd = self.find(self.locator.COLUMN_2ND)
-        # column_3rd = self.find(self.locator.COLUMN_3RD)
-
-        # # Bet on the 2nd and 3rd columns
-        # self.click(chip_bet)
-        # self.click(column_2nd)
-        # self.click(column_3rd)
+    def get_total_bet_change(self, total_bet):
+        while True:
+            new_total_bet = self.get_money(self.locator.TOTAL_BET_VALUE)
+            if new_total_bet != total_bet:
+                return new_total_bet

@@ -23,10 +23,12 @@ class GamePageLocators:
 
     # CSS
     INTERNAL_IFRAME = (By.CSS_SELECTOR, 'div.games-container > iframe')
+
     BALANCE_VALUE = (By.CSS_SELECTOR, '[data-role="balance-label-value"]')
+    TOTAL_BET_VALUE = (By.CSS_SELECTOR, '[data-role="total-bet-label-value"]')
 
-    CHIPS = (By.CSS_SELECTOR, '[data-role="chip-stack"]')
-
-    
     COLUMN_2ND = (By.CSS_SELECTOR, '[data-bet-spot-id="2nd12"]')
     COLUMN_3RD = (By.CSS_SELECTOR, '[data-bet-spot-id="3rd12"]')
+
+    # CLASS_NAME
+    CHIPS = (By.CLASS_NAME, 'chipItem--07039')
