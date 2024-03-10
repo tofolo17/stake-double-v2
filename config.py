@@ -18,7 +18,9 @@ def main():
     print('Virtualenv created.')
 
     # Activate the virtualenv
-    os.system('money/Scripts/activate')
+    os.system('cd money/Scripts')
+    os.system('activate')
+    os.system('cd ../..')
     print('Virtualenv activated.')
 
     # Install the required packages
@@ -29,8 +31,10 @@ def main():
     username = input('Enter your username: ')
     password = input('Enter your password: ')
 
+    # PRINTAR OPÇÕES DE MONEY POSSÍVEIS (ABRIR JOGO)
+
     # Requests how much money the user wants to bet (minimum R$10 / R$5 each column)
-    money = input('Enter the amount of money you want to bet: ')
+    money = input('Enter the amount of money you want to bet (minimum R$10 / R$5 each column): ')
 
     # Get settings
     env_file = env_settings("DESENVOLVIMENTO")

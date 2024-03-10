@@ -49,8 +49,11 @@ Com os requisitos instalados, devemos clonar os arquivos que estão na nuvem no 
 * Digite `cmd`;
 * Vá até a pasta que armazenará o programa através do comando `cd`:
     * Exemplo: `cd Documents`. Para saber mais, clique [aqui](https://www.freecodecamp.org/news/command-line-commands-cli-tutorial/).
-* Execute `git clone ___________________`.
+* Execute `git clone https://github.com/tofolo17/stake-double-v2.git` (temporário);
+* Finalmente, execute `cd stake-double-v2` para entrar no diretório do robô.
+
+![alt text](images\image3.png)
 
 ### Ambiente
 
-_CONTINUAR_
+Estamos quase lá.
