@@ -37,7 +37,7 @@ def main():
     money = input('Enter the amount of money you want to bet (minimum R$10 / R$5 each column): ')
 
     # Get settings
-    env_file = env_settings("DESENVOLVIMENTO")
+    env_file = env_settings("PRODUCAO")
 
     # Save the username and password in a config environment file
     with open(env_file, 'w') as file:
