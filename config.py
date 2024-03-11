@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-STAGE = "PRODUCAO"  # DESENVOLVIMENTO / PRODUCAO
+STAGE = "DESENVOLVIMENTO"  # DESENVOLVIMENTO / PRODUCAO
 
 
 def env_settings(STAGE):

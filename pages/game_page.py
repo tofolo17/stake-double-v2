@@ -131,6 +131,10 @@ class GamePage(BasePage):
                 return result
 
     def handle_loss(self, balance, last_bet):
+        '''
+        PROBLEMAS AO DUPLICAR A APOSTA! Se passa de rodada, ele perde o botão de duplicar.
+        Encontrar verificador de aposta encerrada.
+        '''
         # Handle the loss scenario
         current_bet = last_bet * 2
         print('Loss!')
