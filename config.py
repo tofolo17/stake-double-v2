@@ -14,9 +14,15 @@ def env_settings(STAGE):
 
 
 def main():
+    # Check if the username var is empty in the config file
+    env_file = env_settings(STAGE)
+    with open(env_file, 'r') as file:
+        lines = file.readlines()
+        username = lines[0].split('=')[1].strip()
+        password = lines[1].split('=')[1].strip()
+
     # Reset the repo keeping a specific file
     os.system('git reset --hard')
-    os.system('git checkout -- config.env')
 
     # Check if the repo is up to date
     r = subprocess.run(
@@ -26,13 +32,6 @@ def main():
     else:
         error = r.stderr.decode('utf-8')
         print(f"Error: {error}")
-
-    # Check if the username var is empty in the config file
-    env_file = env_settings(STAGE)
-    with open(env_file, 'r') as file:
-        lines = file.readlines()
-        username = lines[0].split('=')[1].strip()
-        password = lines[1].split('=')[1].strip()
 
     if (username == '' or password == '') or ("Already up to date" not in output):
         os.system('pip install -r requirements.txt')
