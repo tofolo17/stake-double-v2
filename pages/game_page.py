@@ -1,3 +1,5 @@
+import os
+
 from resources.utils import *
 from pages.base_page import BasePage
 from resources.locators import GamePageLocators
@@ -28,7 +30,7 @@ class GamePage(BasePage):
 
     def bet_strategy(self):
         # Initial bet amount
-        first_bet = 5
+        first_bet = int(os.getenv('MONEY'))
 
         # Get the balance
         balance = self.get_money(self.locator.BALANCE_VALUE)

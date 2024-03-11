@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-STAGE = "PRODUCAO"  # DESENVOLVIMENTO / PRODUCAO
+STAGE = "DESENVOLVIMENTO"  # DESENVOLVIMENTO / PRODUCAO
 
 
 def env_settings(STAGE):
@@ -65,7 +65,7 @@ def main():
     ))
     if money not in [2, 5, 10, 20, 50, 250]:  # ALTERAR PARA 10, 20, 50, 250
         print('Invalid amount. Please enter a valid amount.')
-        money = float(input(
+        money = int(input(
             'Enter the amount of money you want to bet: R$'
         ))
 
