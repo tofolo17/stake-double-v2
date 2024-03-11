@@ -11,18 +11,6 @@ def env_settings(STAGE):
 
 
 def main():
-    # Check if there's a folder called "money" in this directory
-    if not os.path.exists('money'):
-        # If not, create an virtualenv called "money" the current directory
-        os.system('virtualenv money')
-    print('Virtualenv created.')
-
-    # Activate the virtualenv
-    os.system('cd money/Scripts')
-    os.system('activate')
-    os.system('cd ../..')
-    print('Virtualenv activated.')
-
     # Install the required packages
     os.system('pip install -r requirements.txt')
     print('Packages installed.')
