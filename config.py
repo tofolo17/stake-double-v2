@@ -31,11 +31,15 @@ def main():
     )
     if r.returncode == 0:
         output = r.stdout.decode('utf-8')
+        if 'Already up to date' not in output:
+            # Ask user to rerun the code
+            print('The code has been updated. Please run the code again.')
+            exit()
     else:
         error = r.stderr.decode('utf-8')
         print(f"Error: {error}")
 
-    if (username == '' or password == '') or ("Already up to date" not in output):
+    if (username == '' or password == ''):
         os.system('pip install -r requirements.txt')
         print('Packages installed.')
 
