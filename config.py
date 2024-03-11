@@ -14,7 +14,8 @@ def env_settings(STAGE):
 
 def main():
     # Check for updates
-    os.system('git pull')
+    r = os.system('git pull')
+    print(f'RESPOSTA: "{r}"')
 
     # Install the required packages
     os.system('pip install -r requirements.txt')
