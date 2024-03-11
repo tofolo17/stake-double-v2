@@ -14,6 +14,10 @@ def env_settings(STAGE):
 
 
 def main():
+    # Reset the repo keeping a specific file
+    os.system('git reset --hard')
+    os.system('git checkout -- config.env')
+
     # Check if the repo is up to date
     r = subprocess.run(
         ['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
