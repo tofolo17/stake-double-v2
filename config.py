@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-STAGE = "PRODUCAO"  # DESENVOLVIMENTO / PRODUCAO
+STAGE = "DESENVOLVIMENTO"  # DESENVOLVIMENTO / PRODUCAO
 
 
 def env_settings(STAGE):
@@ -23,10 +23,12 @@ def main():
 
     # Reset the repo keeping a specific file
     os.system('git reset --hard')
+    print('')
 
     # Check if the repo is up to date
     r = subprocess.run(
-        ['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
     if r.returncode == 0:
         output = r.stdout.decode('utf-8')
     else:
@@ -48,12 +50,18 @@ def main():
             username = input('Enter your username: ')
             password = input('Enter your password: ')
 
-    # # PRINTAR OPÇÕES DE MONEY POSSÍVEIS (ABRIR JOGO)
+    # Print the betting options
+    print('You can bet R$10, R$20, R$50 or R$250.')
 
     # Requests how much money the user wants to bet (minimum R$10 / R$5 each column)
-    money = input(
+    money = float(input(
         'Enter the amount of money you want to bet: R$'
-    )
+    ))
+    if money not in [2, 5, 10, 20, 50, 250]:  # ALTERAR PARA 10, 20, 50, 250
+        print('Invalid amount. Please enter a valid amount.')
+        money = float(input(
+            'Enter the amount of money you want to bet: R$'
+        ))
 
     # Save the username and password in a config environment file
     with open(env_file, 'w') as file:
