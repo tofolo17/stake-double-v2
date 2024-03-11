@@ -20,6 +20,7 @@ def main():
         lines = file.readlines()
         username = lines[0].split('=')[1].strip()
         password = lines[1].split('=')[1].strip()
+        money = lines[2].split('=')[1].strip()
 
     # Reset the repo keeping a specific file
     os.system('git reset --hard')
@@ -34,6 +35,7 @@ def main():
         if 'Already up to date' not in output:
             # Ask user to rerun the code
             print('The code has been updated. Please run the code again.')
+            update_env(username, password, money, env_file)
             exit()
     else:
         error = r.stderr.decode('utf-8')
@@ -68,6 +70,11 @@ def main():
         ))
 
     # Save the username and password in a config environment file
+    update_env(username, password, money, env_file)
+
+
+# Update the environment variables
+def update_env(username, password, money, env_file):
     with open(env_file, 'w') as file:
         file.write(f'USER={username}\n')
         file.write(f'PASSWORD={password}\n')
